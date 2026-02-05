@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Job {
+  id            String       @id @default(cuid())
+  type          JobType
+  status        JobStatus
+  createdAt     DateTime     @default(now())
+  primaryFile   Bytes?
+  secondaryFile Bytes?
+  JobMessage    JobMessage[]
+}
+
+model JobMessage {
+  id        String   @id @default(cuid())
+  jobId     String
+  createdAt DateTime @default(now())
+  message   String
+  Job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+enum JobStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+  FAILED
+}
+
+enum JobType {
+  SHOP_REEL
+  FISH_TALES
+  SITE_SCOUT
+}
